@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RandomPhotos</string>
+    <string name="fetch_button_text">Fetch Image</string>
+    <string name="error_message_text">ইন্টারনেট কানেকশন বন্ধ আছে।\nসর্বশেষ আনা ছবিটি দেখানো হল।</string>
+</resources>
