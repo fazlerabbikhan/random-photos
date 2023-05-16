@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.InputStream;
@@ -21,6 +22,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String LAST_FETCHED_IMAGE = "last_fetched_image";
 
     private ImageView imagePlaceholder;
     private TextView errorMessage;
@@ -45,20 +48,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if (savedInstanceState != null) {
+            lastFetchedImage = savedInstanceState.getParcelable(LAST_FETCHED_IMAGE);
+        }
+
         // Checking if a previously fetched image exists and setting it as the placeholder
         if (lastFetchedImage != null) {
             imagePlaceholder.setImageBitmap(lastFetchedImage);
         }
     }
 
-    // Checking internet connection availability
+    // Keeping the state of activity even if I rotate my screen
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(LAST_FETCHED_IMAGE, lastFetchedImage);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        lastFetchedImage = savedInstanceState.getParcelable(LAST_FETCHED_IMAGE);
+    }
+
+    // Checking if internet is available
     private boolean isNetworkConnected() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    // Showing error message in-case of offline
+    // Showing error message
     private void showErrorMessage() {
         Toast.makeText(this, R.string.error_message_text, Toast.LENGTH_SHORT).show();
         errorMessage.setVisibility(View.VISIBLE);
